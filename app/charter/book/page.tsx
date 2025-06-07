@@ -1,6 +1,9 @@
 "use client"
 
+import type React from "react"
+
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { MainNav } from "@/components/main-nav"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -8,390 +11,356 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Calendar } from "@/components/ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { CalendarIcon, Clock, MapPin, Phone, Mail, User } from "lucide-react"
-import { format } from "date-fns"
-import { cn } from "@/lib/utils"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Calendar, Clock, MapPin, Users, Car, CheckCircle, AlertCircle } from "lucide-react"
+import { supabase } from "@/lib/supabase"
 
 const vehicles = [
-  {
-    id: "1",
-    name: "Toyota Camry (2006)",
-    price: 100000,
-    category: "Sedan",
-    description: "Reliable sedan with excellent comfort and fuel efficiency",
-    available: true,
-  },
-  {
-    id: "2",
-    name: "GMC Terrain (2011)",
-    price: 200000,
-    category: "SUV",
-    description: "Spacious SUV with premium comfort features and excellent road presence",
-    available: true,
-  },
-]
-
-const timeSlots = [
-  "08:00",
-  "09:00",
-  "10:00",
-  "11:00",
-  "12:00",
-  "13:00",
-  "14:00",
-  "15:00",
-  "16:00",
-  "17:00",
-  "18:00",
-  "19:00",
-  "20:00",
+  { id: "camry-2006", name: "Toyota Camry (2006)", pricePerHour: 10000, passengers: 4 },
+  { id: "gmc-terrain", name: "GMC Terrain (2011)", pricePerHour: 20000, passengers: 7 },
 ]
 
 export default function BookCharterPage() {
-  const [date, setDate] = useState<Date>()
-  const [selectedVehicle, setSelectedVehicle] = useState("")
-  const [duration, setDuration] = useState("")
-  const [startTime, setStartTime] = useState("")
+  const router = useRouter()
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState<{ type: "success" | "error"; message: string } | null>(null)
+
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    pickupLocation: "",
+    destination: "",
+    date: "",
+    time: "",
+    duration: "",
+    vehicle: "",
+    passengers: "",
+    specialRequests: "",
+  })
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }))
+  }
 
   const calculateTotal = () => {
-    if (!selectedVehicle || !duration) return 0
-    const vehicle = vehicles.find((v) => v.id === selectedVehicle)
-    return vehicle ? (vehicle.price * Number.parseInt(duration)) / 10 : 0
+    const selectedVehicle = vehicles.find((v) => v.id === formData.vehicle)
+    if (!selectedVehicle || !formData.duration) return 0
+
+    const duration = Number.parseInt(formData.duration)
+    const basePrice = selectedVehicle.pricePerHour * Math.ceil(duration / 10) // Price per 10 hours
+    return basePrice
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+    setSubmitStatus(null)
+
+    try {
+      const selectedVehicle = vehicles.find((v) => v.id === formData.vehicle)
+      if (!selectedVehicle) {
+        throw new Error("Please select a vehicle")
+      }
+
+      const totalPrice = calculateTotal()
+
+      const { data, error } = await supabase
+        .from("charter_bookings")
+        .insert({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          pickup_location: formData.pickupLocation,
+          destination: formData.destination,
+          date: formData.date,
+          time: formData.time,
+          duration: Number.parseInt(formData.duration),
+          vehicle: selectedVehicle.name,
+          passengers: Number.parseInt(formData.passengers),
+          special_requests: formData.specialRequests || null,
+          total_price: totalPrice,
+          status: "pending",
+        })
+        .select()
+
+      if (error) {
+        throw error
+      }
+
+      setSubmitStatus({
+        type: "success",
+        message:
+          "Your charter booking has been submitted successfully! We will contact you shortly to confirm the details.",
+      })
+
+      // Reset form
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        pickupLocation: "",
+        destination: "",
+        date: "",
+        time: "",
+        duration: "",
+        vehicle: "",
+        passengers: "",
+        specialRequests: "",
+      })
+    } catch (error: any) {
+      setSubmitStatus({
+        type: "error",
+        message: error.message || "An error occurred while submitting your booking. Please try again.",
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
     <div className="flex min-h-screen flex-col">
       <MainNav />
-      <div className="flex-1 space-y-4 p-8 pt-6">
-        <div className="flex items-center justify-between space-y-2">
-          <h2 className="text-3xl font-bold tracking-tight">Book Charter Service</h2>
-        </div>
-
-        <div className="grid gap-6 md:grid-cols-3">
-          <div className="md:col-span-2 space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Booking Details</CardTitle>
-                <CardDescription>Fill in your charter service requirements</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="pickup">Pickup Location</Label>
-                    <div className="relative">
-                      <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input id="pickup" placeholder="Enter pickup address" className="pl-10" />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="destination">Destination</Label>
-                    <div className="relative">
-                      <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input id="destination" placeholder="Enter destination address" className="pl-10" />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid gap-4 md:grid-cols-3">
-                  <div className="space-y-2">
-                    <Label>Date</Label>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant={"outline"}
-                          className={cn("w-full justify-start text-left font-normal", !date && "text-muted-foreground")}
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {date ? format(date, "PPP") : <span>Pick a date</span>}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0">
-                        <Calendar mode="single" selected={date} onSelect={setDate} initialFocus />
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Start Time</Label>
-                    <Select value={startTime} onValueChange={setStartTime}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select time" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {timeSlots.map((time) => (
-                          <SelectItem key={time} value={time}>
-                            {time}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Duration (hours)</Label>
-                    <Select value={duration} onValueChange={setDuration}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Hours" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {[10, 20, 30, 40, 50].map((hour) => (
-                          <SelectItem key={hour} value={hour.toString()}>
-                            {hour} hour{hour > 1 ? "s" : ""}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Select Vehicle</Label>
-                  <Select value={selectedVehicle} onValueChange={setSelectedVehicle}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Choose your vehicle" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {vehicles.map((vehicle) => (
-                        <SelectItem key={vehicle.id} value={vehicle.id} disabled={!vehicle.available}>
-                          <div className="flex items-center justify-between w-full">
-                            <span>{vehicle.name}</span>
-                            <span className="ml-4 text-sm text-muted-foreground">
-                              ₦{vehicle.price.toLocaleString()}/10hrs
-                            </span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="passengers">Number of Passengers</Label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select passengers" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
-                          <SelectItem key={num} value={num.toString()}>
-                            {num} passenger{num > 1 ? "s" : ""}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="trip-type">Trip Type</Label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select trip type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="one-way">One Way</SelectItem>
-                        <SelectItem value="round-trip">Round Trip</SelectItem>
-                        <SelectItem value="hourly">Hourly</SelectItem>
-                        <SelectItem value="daily">Daily</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="occasion">Occasion/Purpose</Label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select occasion" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="business">Business Meeting</SelectItem>
-                        <SelectItem value="airport">Airport Transfer</SelectItem>
-                        <SelectItem value="wedding">Wedding</SelectItem>
-                        <SelectItem value="event">Special Event</SelectItem>
-                        <SelectItem value="tourism">Tourism/Sightseeing</SelectItem>
-                        <SelectItem value="personal">Personal</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="luggage">Luggage Requirements</Label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select luggage" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="none">No Luggage</SelectItem>
-                        <SelectItem value="light">Light Luggage (1-2 bags)</SelectItem>
-                        <SelectItem value="medium">Medium Luggage (3-4 bags)</SelectItem>
-                        <SelectItem value="heavy">Heavy Luggage (5+ bags)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="return-pickup">Return Pickup Location (if different)</Label>
-                  <div className="relative">
-                    <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input id="return-pickup" placeholder="Enter return pickup address (optional)" className="pl-10" />
-                  </div>
-                </div>
-
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="preferred-driver">Driver Preference</Label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select preference" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="any">Any Available Driver</SelectItem>
-                        <SelectItem value="male">Male Driver</SelectItem>
-                        <SelectItem value="female">Female Driver</SelectItem>
-                        <SelectItem value="experienced">Most Experienced</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="payment-method">Preferred Payment Method</Label>
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select payment method" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="cash">Cash</SelectItem>
-                        <SelectItem value="transfer">Bank Transfer</SelectItem>
-                        <SelectItem value="card">Credit/Debit Card</SelectItem>
-                        <SelectItem value="mobile">Mobile Payment</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="special-requests">Special Requests</Label>
-                  <Textarea
-                    id="special-requests"
-                    placeholder="Any special requirements or requests..."
-                    className="min-h-[100px]"
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Contact Information</CardTitle>
-                <CardDescription>Your details for the booking</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="full-name">Full Name</Label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input id="full-name" placeholder="Enter your full name" className="pl-10" />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <div className="relative">
-                      <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                      <Input id="phone" placeholder="Enter your phone number" className="pl-10" />
-                    </div>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email Address</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input id="email" type="email" placeholder="Enter your email address" className="pl-10" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+      <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
+        <div className="mx-auto max-w-2xl">
+          <div className="space-y-2 text-center mb-8">
+            <h1 className="text-3xl font-bold tracking-tight">Book Charter Service</h1>
+            <p className="text-muted-foreground">
+              Reserve your premium charter vehicle for a comfortable and reliable journey
+            </p>
           </div>
 
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Booking Summary</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {selectedVehicle && (
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-sm">Vehicle:</span>
-                      <span className="text-sm font-medium">
-                        {vehicles.find((v) => v.id === selectedVehicle)?.name}
-                      </span>
+          {submitStatus && (
+            <Alert className={`mb-6 ${submitStatus.type === "success" ? "border-green-500" : "border-red-500"}`}>
+              {submitStatus.type === "success" ? (
+                <CheckCircle className="h-4 w-4 text-green-500" />
+              ) : (
+                <AlertCircle className="h-4 w-4 text-red-500" />
+              )}
+              <AlertDescription className={submitStatus.type === "success" ? "text-green-700" : "text-red-700"}>
+                {submitStatus.message}
+              </AlertDescription>
+            </Alert>
+          )}
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Car className="h-5 w-5" />
+                Charter Booking Details
+              </CardTitle>
+              <CardDescription>Fill in your details and travel requirements for your charter service</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Personal Information */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium">Personal Information</h3>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label htmlFor="name">Full Name *</Label>
+                      <Input
+                        id="name"
+                        value={formData.name}
+                        onChange={(e) => handleInputChange("name", e.target.value)}
+                        placeholder="Enter your full name"
+                        required
+                      />
                     </div>
-                    {duration && (
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email Address *</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) => handleInputChange("email", e.target.value)}
+                        placeholder="your.email@example.com"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone Number *</Label>
+                    <Input
+                      id="phone"
+                      value={formData.phone}
+                      onChange={(e) => handleInputChange("phone", e.target.value)}
+                      placeholder="+234 XXX XXX XXXX"
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* Trip Details */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium flex items-center gap-2">
+                    <MapPin className="h-5 w-5" />
+                    Trip Details
+                  </h3>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label htmlFor="pickup">Pickup Location *</Label>
+                      <Input
+                        id="pickup"
+                        value={formData.pickupLocation}
+                        onChange={(e) => handleInputChange("pickupLocation", e.target.value)}
+                        placeholder="Enter pickup address"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="destination">Destination *</Label>
+                      <Input
+                        id="destination"
+                        value={formData.destination}
+                        onChange={(e) => handleInputChange("destination", e.target.value)}
+                        placeholder="Enter destination address"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label htmlFor="date" className="flex items-center gap-2">
+                        <Calendar className="h-4 w-4" />
+                        Date *
+                      </Label>
+                      <Input
+                        id="date"
+                        type="date"
+                        value={formData.date}
+                        onChange={(e) => handleInputChange("date", e.target.value)}
+                        min={new Date().toISOString().split("T")[0]}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="time" className="flex items-center gap-2">
+                        <Clock className="h-4 w-4" />
+                        Time *
+                      </Label>
+                      <Input
+                        id="time"
+                        type="time"
+                        value={formData.time}
+                        onChange={(e) => handleInputChange("time", e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Vehicle Selection */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium flex items-center gap-2">
+                    <Car className="h-5 w-5" />
+                    Vehicle & Duration
+                  </h3>
+                  <div className="grid gap-4 md:grid-cols-3">
+                    <div className="space-y-2">
+                      <Label htmlFor="vehicle">Select Vehicle *</Label>
+                      <Select value={formData.vehicle} onValueChange={(value) => handleInputChange("vehicle", value)}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Choose vehicle" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {vehicles.map((vehicle) => (
+                            <SelectItem key={vehicle.id} value={vehicle.id}>
+                              {vehicle.name} - ₦{vehicle.pricePerHour.toLocaleString()}/10hrs
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="duration">Duration (hours) *</Label>
+                      <Input
+                        id="duration"
+                        type="number"
+                        min="1"
+                        max="240"
+                        value={formData.duration}
+                        onChange={(e) => handleInputChange("duration", e.target.value)}
+                        placeholder="e.g., 10"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="passengers" className="flex items-center gap-2">
+                        <Users className="h-4 w-4" />
+                        Passengers *
+                      </Label>
+                      <Input
+                        id="passengers"
+                        type="number"
+                        min="1"
+                        max="8"
+                        value={formData.passengers}
+                        onChange={(e) => handleInputChange("passengers", e.target.value)}
+                        placeholder="Number of passengers"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Special Requests */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium">Additional Information</h3>
+                  <div className="space-y-2">
+                    <Label htmlFor="special-requests">Special Requests (Optional)</Label>
+                    <Textarea
+                      id="special-requests"
+                      value={formData.specialRequests}
+                      onChange={(e) => handleInputChange("specialRequests", e.target.value)}
+                      placeholder="Any special requirements, stops, or requests..."
+                      rows={3}
+                    />
+                  </div>
+                </div>
+
+                {/* Price Summary */}
+                {formData.vehicle && formData.duration && (
+                  <div className="rounded-lg border p-4 bg-muted/50">
+                    <h3 className="text-lg font-medium mb-2">Price Summary</h3>
+                    <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-sm">Duration:</span>
-                        <span className="text-sm font-medium">
-                          {duration} hour{Number.parseInt(duration) > 1 ? "s" : ""}
+                        <span>Vehicle:</span>
+                        <span>{vehicles.find((v) => v.id === formData.vehicle)?.name}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Duration:</span>
+                        <span>{formData.duration} hours</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Rate:</span>
+                        <span>
+                          ₦{vehicles.find((v) => v.id === formData.vehicle)?.pricePerHour.toLocaleString()}/10hrs
                         </span>
                       </div>
-                    )}
-                    {date && (
-                      <div className="flex justify-between">
-                        <span className="text-sm">Date:</span>
-                        <span className="text-sm font-medium">{format(date, "MMM dd, yyyy")}</span>
+                      <hr />
+                      <div className="flex justify-between font-medium text-lg">
+                        <span>Total:</span>
+                        <span>₦{calculateTotal().toLocaleString()}</span>
                       </div>
-                    )}
-                    {startTime && (
-                      <div className="flex justify-between">
-                        <span className="text-sm">Time:</span>
-                        <span className="text-sm font-medium">{startTime}</span>
-                      </div>
-                    )}
+                      <p className="text-xs text-muted-foreground mt-2">
+                        * Additional charges may apply for trips outside Lagos
+                      </p>
+                    </div>
                   </div>
                 )}
 
-                {calculateTotal() > 0 && (
-                  <>
-                    <div className="border-t pt-4">
-                      <div className="flex justify-between items-center">
-                        <span className="font-medium">Total:</span>
-                        <span className="text-2xl font-bold text-primary">₦{calculateTotal().toLocaleString()}</span>
-                      </div>
-                    </div>
-                    <Button className="w-full" size="lg">
-                      Confirm Booking
-                    </Button>
-                  </>
-                )}
-              </CardContent>
-            </Card>
+                <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>
+                  {isSubmitting ? "Submitting..." : "Submit Booking Request"}
+                </Button>
 
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Clock className="h-5 w-5" />
-                  Need Help?
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <p className="text-sm text-muted-foreground">
-                  Contact our customer service team for assistance with your booking.
+                <p className="text-sm text-muted-foreground text-center">
+                  By submitting this form, you agree to our terms of service. We will contact you within 24 hours to
+                  confirm your booking.
                 </p>
-                <div className="space-y-1">
-                  <p className="text-sm font-medium">WhatsApp: +234 913 563 0154</p>
-                  <p className="text-sm font-medium">Mobile: +234 906 918 3165</p>
-                  <p className="text-sm font-medium">Email: bridgeocean@cyberservices.com</p>
-                  <Button
-                    className="w-full mt-2"
-                    onClick={() => window.open("https://wa.me/c/2349135630154", "_blank")}
-                  >
-                    View Our Fleet Catalog on WhatsApp
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+              </form>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

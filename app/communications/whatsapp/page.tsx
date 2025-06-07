@@ -2,12 +2,14 @@
 
 import { MainNav } from "@/components/main-nav"
 import { WhatsAppIntegration } from "@/components/whatsapp-integration"
+import { WhatsAppAIAssistant } from "@/components/whatsapp-ai-assistant"
+import { WhatsAppGrokAI } from "@/components/whatsapp-grok-ai"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Phone, Settings, MessageCircle, ExternalLink } from "lucide-react"
+import { Phone, Settings, MessageCircle, ExternalLink, Bot, Sparkles } from "lucide-react"
 
 export default function WhatsAppPage() {
   return (
@@ -21,12 +23,28 @@ export default function WhatsAppPage() {
         <Tabs defaultValue="send" className="space-y-4">
           <TabsList>
             <TabsTrigger value="send">Send Messages</TabsTrigger>
+            <TabsTrigger value="ai-assistant">
+              <Bot className="h-4 w-4 mr-2" />
+              Simple AI
+            </TabsTrigger>
+            <TabsTrigger value="grok-ai">
+              <Sparkles className="h-4 w-4 mr-2" />
+              Grok AI
+            </TabsTrigger>
             <TabsTrigger value="business">Business Setup</TabsTrigger>
             <TabsTrigger value="api">API Integration</TabsTrigger>
           </TabsList>
 
           <TabsContent value="send" className="space-y-4">
             <WhatsAppIntegration />
+          </TabsContent>
+
+          <TabsContent value="ai-assistant" className="space-y-4">
+            <WhatsAppAIAssistant />
+          </TabsContent>
+
+          <TabsContent value="grok-ai" className="space-y-4">
+            <WhatsAppGrokAI />
           </TabsContent>
 
           <TabsContent value="business" className="space-y-4">
@@ -131,6 +149,10 @@ export default function WhatsAppPage() {
                   <div className="flex items-center justify-between">
                     <span className="text-sm">Webhook</span>
                     <span className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded">Not Set</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">Grok AI</span>
+                    <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Active</span>
                   </div>
                 </CardContent>
               </Card>
