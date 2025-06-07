@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils"
 const vehicles = [
   {
     id: "1",
-    name: "Toyota Camry (Sedan)",
+    name: "Toyota Camry (2006)",
     price: 100000,
     category: "Sedan",
     description: "Reliable sedan with excellent comfort and fuel efficiency",
@@ -25,7 +25,7 @@ const vehicles = [
   },
   {
     id: "2",
-    name: "GMC Terrain (SUV)",
+    name: "GMC Terrain (2011)",
     price: 200000,
     category: "SUV",
     description: "Spacious SUV with premium comfort features and excellent road presence",
@@ -142,6 +142,27 @@ export default function BookCharterPage() {
                       </SelectContent>
                     </Select>
                   </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Select Vehicle</Label>
+                  <Select value={selectedVehicle} onValueChange={setSelectedVehicle}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choose your vehicle" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {vehicles.map((vehicle) => (
+                        <SelectItem key={vehicle.id} value={vehicle.id} disabled={!vehicle.available}>
+                          <div className="flex items-center justify-between w-full">
+                            <span>{vehicle.name}</span>
+                            <span className="ml-4 text-sm text-muted-foreground">
+                              ₦{vehicle.price.toLocaleString()}/10hrs
+                            </span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div className="grid gap-4 md:grid-cols-2">

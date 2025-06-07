@@ -14,7 +14,6 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
 import { ModeToggle } from "./mode-toggle"
-import { UserNav } from "./user-nav"
 
 export function MainNav() {
   return (
@@ -26,6 +25,13 @@ export function MainNav() {
         </Link>
         <NavigationMenu className="hidden md:flex">
           <NavigationMenuList>
+            <NavigationMenuItem>
+              <Link href="/nexus" legacyBehavior passHref>
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                  Nexus Emergency Logistics
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
             <NavigationMenuItem>
               <NavigationMenuTrigger>Charter Services</NavigationMenuTrigger>
               <NavigationMenuContent>
@@ -67,13 +73,13 @@ export function MainNav() {
                       >
                         <div className="mb-2 mt-4 text-lg font-medium">DriverPrep</div>
                         <p className="text-sm leading-tight text-muted-foreground">
-                          Smart meeting preparation for driver onboarding
+                          Internal driver management and onboarding system
                         </p>
                       </a>
                     </NavigationMenuLink>
                   </li>
                   <ListItem href="/dashboard" title="Dashboard">
-                    Manage driver applications and interviews
+                    Internal driver management system
                   </ListItem>
                 </ul>
               </NavigationMenuContent>
@@ -113,7 +119,6 @@ export function MainNav() {
         </NavigationMenu>
         <div className="ml-auto flex items-center space-x-4">
           <ModeToggle />
-          <UserNav />
         </div>
       </div>
     </div>

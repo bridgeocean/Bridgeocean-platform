@@ -1,31 +1,28 @@
 import type React from "react"
-import type { Metadata } from "next"
-import { Mona_Sans as FontSans } from "next/font/google"
 import "./globals.css"
+import type { Metadata } from "next"
+import { Inter } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
-import { cn } from "@/lib/utils"
+import { AuthProvider } from "@/components/auth-provider"
 
-const fontSans = FontSans({
-  subsets: ["latin"],
-  variable: "--font-sans",
-})
+const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Bridgeocean | Charter Services & Driver Management",
-  description: "Premium charter services and smart driver onboarding platform",
+  title: "BridgeOcean - Satellite-Powered Routing Solutions",
+  description: "Nexus Emergency Logistics and Premium Charter Services",
     generator: 'v0.dev'
 }
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode
-}>) {
+}) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn("min-h-screen bg-background font-sans antialiased", fontSans.variable)}>
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
-          {children}
+      <body className={inter.className}>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
+          <AuthProvider>{children}</AuthProvider>
         </ThemeProvider>
       </body>
     </html>

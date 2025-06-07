@@ -3,7 +3,7 @@
 import type React from "react"
 
 import { useState } from "react"
-import { MainNav } from "@/components/main-nav"
+import { DashboardHeader } from "@/components/dashboard-header"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -36,7 +36,7 @@ export default function NewCandidatePage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <MainNav />
+      <DashboardHeader />
       <div className="flex-1 space-y-4 p-8 pt-6">
         <div className="flex items-center space-x-4">
           <Link href="/dashboard">
@@ -104,12 +104,12 @@ export default function NewCandidatePage() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="license">Driver's License Number</Label>
+                    <Label htmlFor="license">Means of Identification</Label>
                     <div className="relative">
                       <FileText className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="license"
-                        placeholder="Enter license number"
+                        placeholder="Enter ID number"
                         className="pl-10"
                         value={formData.licenseNumber}
                         onChange={(e) => setFormData({ ...formData, licenseNumber: e.target.value })}
@@ -166,17 +166,6 @@ export default function NewCandidatePage() {
                       </SelectContent>
                     </Select>
                   </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="experience">Driving Experience (years)</Label>
-                  <Input
-                    id="experience"
-                    type="number"
-                    placeholder="Enter years of experience"
-                    value={formData.experience}
-                    onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
-                  />
                 </div>
 
                 <div className="flex items-center space-x-2">

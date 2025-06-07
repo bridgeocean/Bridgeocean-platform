@@ -1,12 +1,11 @@
 "use client"
 
 import { Badge } from "@/components/ui/badge"
-
 import { Button } from "@/components/ui/button"
 import { MainNav } from "@/components/main-nav"
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowRight, Car, Calendar, Users, Shield, Clock, Star } from "lucide-react"
+import { Satellite, Calendar, Users, Shield, Clock, Star, Navigation, MapPin } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default function Home() {
@@ -20,24 +19,27 @@ export default function Home() {
             <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
               <div className="flex flex-col justify-center space-y-4">
                 <div className="space-y-2">
+                  <Badge variant="outline" className="w-fit border-red-500 text-red-500">
+                    Satellite-Powered Technology
+                  </Badge>
                   <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
-                    Premium Charter Services & Smart Driver Management
+                    Routing as a Service & Emergency Logistics
                   </h1>
                   <p className="max-w-[600px] text-muted-foreground md:text-xl">
-                    Experience luxury transportation with our premium charter services, powered by intelligent driver
-                    onboarding and management systems.
+                    Advanced satellite-powered routing solutions with our flagship Nexus Emergency Logistics platform,
+                    complemented by premium charter services and intelligent driver management systems.
                   </p>
                 </div>
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                  <Link href="/charter/book">
-                    <Button size="lg" className="gap-1.5">
-                      Book Charter Service
-                      <ArrowRight className="h-4 w-4" />
+                  <Link href="/nexus">
+                    <Button size="lg" className="gap-1.5 bg-red-600 hover:bg-red-700">
+                      <Satellite className="h-4 w-4" />
+                      Nexus Emergency Logistics
                     </Button>
                   </Link>
-                  <Link href="/driverprep">
+                  <Link href="/charter/book">
                     <Button size="lg" variant="outline">
-                      Driver Management
+                      Charter Services
                     </Button>
                   </Link>
                 </div>
@@ -46,7 +48,7 @@ export default function Home() {
                 <div className="relative h-[450px] w-full">
                   <Image
                     src="/images/luxury-car-hero.jpg"
-                    alt="Premium Charter Vehicle"
+                    alt="Satellite-Powered Routing Solutions"
                     fill
                     className="object-cover rounded-lg"
                     priority
@@ -62,23 +64,68 @@ export default function Home() {
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Our Services</h2>
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Our Core Services</h2>
                 <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  Comprehensive transportation solutions for individuals and businesses
+                  Satellite-powered routing solutions and comprehensive transportation services
                 </p>
               </div>
             </div>
             <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 py-12 md:grid-cols-2">
+              <Card className="relative overflow-hidden border-red-200">
+                <CardHeader className="pb-4">
+                  <div className="flex items-center space-x-2">
+                    <Satellite className="h-8 w-8 text-red-600" />
+                    <CardTitle className="text-2xl">Nexus Emergency Logistics</CardTitle>
+                  </div>
+                  <Badge variant="outline" className="w-fit border-red-500 text-red-500">
+                    Flagship Platform
+                  </Badge>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <CardDescription className="text-base">
+                    Satellite-powered emergency coordination platform leveraging AI intelligent coordination, routing
+                    engine, and GPS technology for life-saving emergency response.
+                  </CardDescription>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div className="flex items-center space-x-2">
+                      <Navigation className="h-4 w-4 text-red-500" />
+                      <span>AI Coordination</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <MapPin className="h-4 w-4 text-blue-500" />
+                      <span>Routing Engine</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Satellite className="h-4 w-4 text-green-500" />
+                      <span>Satellite-GPS</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Clock className="h-4 w-4 text-purple-500" />
+                      <span>24/7 Emergency</span>
+                    </div>
+                  </div>
+                  <div className="flex space-x-2 pt-4">
+                    <Link href="/nexus">
+                      <Button className="bg-red-600 hover:bg-red-700">Learn More</Button>
+                    </Link>
+                    <Link href="/contact">
+                      <Button variant="outline">Partner With Us</Button>
+                    </Link>
+                  </div>
+                </CardContent>
+              </Card>
+
               <Card className="relative overflow-hidden">
                 <CardHeader className="pb-4">
                   <div className="flex items-center space-x-2">
-                    <Car className="h-8 w-8 text-primary" />
-                    <CardTitle className="text-2xl">Charter Services</CardTitle>
+                    <Calendar className="h-8 w-8 text-primary" />
+                    <CardTitle className="text-2xl">Charter & Driver Management</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <CardDescription className="text-base">
-                    Premium vehicle rentals for special occasions, business trips, and luxury transportation needs.
+                    Premium charter services with intelligent driver onboarding platform that streamlines recruitment,
+                    interviews, and fleet management operations.
                   </CardDescription>
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div className="flex items-center space-x-2">
@@ -95,55 +142,15 @@ export default function Home() {
                     </div>
                     <div className="flex items-center space-x-2">
                       <Users className="h-4 w-4 text-purple-500" />
-                      <span>Professional Drivers</span>
+                      <span>Smart Management</span>
                     </div>
                   </div>
                   <div className="flex space-x-2 pt-4">
                     <Link href="/charter/book">
-                      <Button>Book Now</Button>
+                      <Button>Book Charter</Button>
                     </Link>
-                    <Link href="/charter/fleet">
-                      <Button variant="outline">View Fleet</Button>
-                    </Link>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="relative overflow-hidden">
-                <CardHeader className="pb-4">
-                  <div className="flex items-center space-x-2">
-                    <Calendar className="h-8 w-8 text-primary" />
-                    <CardTitle className="text-2xl">DriverPrep</CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <CardDescription className="text-base">
-                    AI-powered driver onboarding platform that streamlines recruitment, interviews, and management.
-                  </CardDescription>
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div className="flex items-center space-x-2">
-                      <Users className="h-4 w-4 text-green-500" />
-                      <span>Smart Screening</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Calendar className="h-4 w-4 text-blue-500" />
-                      <span>Auto Scheduling</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Star className="h-4 w-4 text-yellow-500" />
-                      <span>AI Preparation</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Shield className="h-4 w-4 text-purple-500" />
-                      <span>WhatsApp Integration</span>
-                    </div>
-                  </div>
-                  <div className="flex space-x-2 pt-4">
                     <Link href="/dashboard">
-                      <Button>Get Started</Button>
-                    </Link>
-                    <Link href="/driverprep">
-                      <Button variant="outline">Learn More</Button>
+                      <Button variant="outline">Driver Management</Button>
                     </Link>
                   </div>
                 </CardContent>
@@ -239,16 +246,18 @@ export default function Home() {
               <div className="space-y-2">
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Partner With Us</h2>
                 <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  Join our charter fleet and maximize your vehicle's earning potential
+                  Join our routing solutions network or charter fleet to maximize your potential
                 </p>
               </div>
               <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                <Link href="/charter/partner">
-                  <Button size="lg">Register Your Vehicle</Button>
+                <Link href="/nexus">
+                  <Button size="lg" className="bg-red-600 hover:bg-red-700">
+                    Emergency Logistics Partnership
+                  </Button>
                 </Link>
-                <Link href="/contact">
+                <Link href="/charter/partner">
                   <Button size="lg" variant="outline">
-                    Contact Us
+                    Register Your Vehicle
                   </Button>
                 </Link>
               </div>

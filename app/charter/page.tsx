@@ -9,43 +9,27 @@ import { Car, Users, Shield, Clock, Star, Calendar } from "lucide-react"
 const vehicles = [
   {
     id: 1,
-    name: "Mercedes-Benz S-Class",
-    category: "Luxury Sedan",
+    name: "Toyota Camry",
+    year: "2006",
+    category: "Sedan",
     passengers: 4,
-    price: "$150/hour",
-    image: "/placeholder.svg?height=200&width=300",
-    features: ["Leather Interior", "WiFi", "Climate Control", "Professional Driver"],
+    price: "₦100,000 per 10 hours",
+    image: "/images/camry-final.jpg",
+    features: ["Leather Interior", "Air Conditioning", "Fuel Efficient", "Professional Driver"],
     available: true,
+    note: "*Within Lagos. Additional charges apply for trips outside Lagos.",
   },
   {
     id: 2,
-    name: "BMW X7",
-    category: "Luxury SUV",
-    passengers: 7,
-    price: "$180/hour",
-    image: "/placeholder.svg?height=200&width=300",
-    features: ["Spacious Interior", "Entertainment System", "Panoramic Roof", "Professional Driver"],
-    available: true,
-  },
-  {
-    id: 3,
-    name: "Audi A8",
-    category: "Executive Sedan",
-    passengers: 4,
-    price: "$140/hour",
-    image: "/placeholder.svg?height=200&width=300",
-    features: ["Executive Comfort", "Advanced Safety", "Premium Sound", "Professional Driver"],
-    available: false,
-  },
-  {
-    id: 4,
-    name: "Range Rover Vogue",
-    category: "Luxury SUV",
+    name: "GMC Terrain",
+    year: "2011",
+    category: "SUV",
     passengers: 5,
-    price: "$200/hour",
-    image: "/placeholder.svg?height=200&width=300",
-    features: ["Off-road Capable", "Luxury Interior", "Advanced Tech", "Professional Driver"],
+    price: "₦200,000 per 10 hours",
+    image: "/images/gmc-final.jpg",
+    features: ["Spacious Interior", "Entertainment System", "Comfortable Ride", "Professional Driver"],
     available: true,
+    note: "*Within Lagos. Additional charges apply for trips outside Lagos.",
   },
 ]
 
@@ -126,7 +110,12 @@ export default function CharterPage() {
               {vehicles.map((vehicle) => (
                 <Card key={vehicle.id} className="overflow-hidden">
                   <div className="relative h-48">
-                    <Image src={vehicle.image || "/placeholder.svg"} alt={vehicle.name} fill className="object-cover" />
+                    <Image
+                      src={vehicle.image || "/placeholder.svg"}
+                      alt={vehicle.name}
+                      fill
+                      className="object-contain bg-background"
+                    />
                     <div className="absolute top-4 right-4">
                       <Badge variant={vehicle.available ? "default" : "secondary"}>
                         {vehicle.available ? "Available" : "Booked"}
@@ -136,7 +125,9 @@ export default function CharterPage() {
                   <CardHeader>
                     <div className="flex justify-between items-start">
                       <div>
-                        <CardTitle className="text-xl">{vehicle.name}</CardTitle>
+                        <CardTitle className="text-xl">
+                          {vehicle.name} ({vehicle.year})
+                        </CardTitle>
                         <CardDescription className="flex items-center gap-2 mt-1">
                           <Car className="h-4 w-4" />
                           {vehicle.category}
@@ -158,6 +149,7 @@ export default function CharterPage() {
                           </Badge>
                         ))}
                       </div>
+                      <p className="text-xs text-muted-foreground">{vehicle.note}</p>
                       <div className="flex gap-2">
                         <Link href={`/charter/book?vehicle=${vehicle.id}`} className="flex-1">
                           <Button className="w-full" disabled={!vehicle.available}>
