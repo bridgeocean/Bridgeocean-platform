@@ -1,13 +1,13 @@
+"use client"
+
 import { MainNav } from "@/components/main-nav"
+import { WhatsAppIntegration } from "@/components/whatsapp-integration"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Phone, Calendar, Settings } from "lucide-react"
+import { Phone, Settings, MessageCircle, ExternalLink } from "lucide-react"
 
 export default function WhatsAppPage() {
   return (
@@ -18,205 +18,197 @@ export default function WhatsAppPage() {
           <h2 className="text-3xl font-bold tracking-tight">WhatsApp Communications</h2>
         </div>
 
-        {/* Add this section right after the page header and before the existing Tabs */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mb-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Phone className="h-5 w-5" />
-                WhatsApp Business Setup
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="phone">Business Phone Number</Label>
-                <Input id="phone" placeholder="+1234567890" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="api-key">WhatsApp Business API Key</Label>
-                <Input id="api-key" type="password" placeholder="Enter your API key" />
-              </div>
-              <Button className="w-full">Connect WhatsApp Business</Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Calendar className="h-5 w-5" />
-                Calendar Integration
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label>Select Calendar Provider</Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Choose calendar" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="google">Google Calendar</SelectItem>
-                    <SelectItem value="outlook">Microsoft Outlook</SelectItem>
-                    <SelectItem value="apple">Apple Calendar</SelectItem>
-                    <SelectItem value="yahoo">Yahoo Calendar</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <Button className="w-full">Connect Calendar</Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Settings className="h-5 w-5" />
-                Quick Actions
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <Button variant="outline" className="w-full justify-start">
-                Test WhatsApp Connection
-              </Button>
-              <Button variant="outline" className="w-full justify-start">
-                Sync Calendar Events
-              </Button>
-              <Button variant="outline" className="w-full justify-start">
-                Import Contacts
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-
-        <Tabs defaultValue="messages" className="space-y-4">
+        <Tabs defaultValue="send" className="space-y-4">
           <TabsList>
-            <TabsTrigger value="messages">Messages</TabsTrigger>
-            <TabsTrigger value="templates">Templates</TabsTrigger>
-            <TabsTrigger value="settings">Settings</TabsTrigger>
+            <TabsTrigger value="send">Send Messages</TabsTrigger>
+            <TabsTrigger value="business">Business Setup</TabsTrigger>
+            <TabsTrigger value="api">API Integration</TabsTrigger>
           </TabsList>
-          <TabsContent value="messages" className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Card className="col-span-1">
+
+          <TabsContent value="send" className="space-y-4">
+            <WhatsAppIntegration />
+          </TabsContent>
+
+          <TabsContent value="business" className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <Card>
                 <CardHeader>
-                  <CardTitle>Conversations</CardTitle>
-                  <CardDescription>Recent WhatsApp conversations</CardDescription>
+                  <CardTitle className="flex items-center gap-2">
+                    <Phone className="h-5 w-5" />
+                    Business Contact Numbers
+                  </CardTitle>
                 </CardHeader>
-                <CardContent className="p-0">
-                  <ScrollArea className="h-[600px]">
-                    <div className="space-y-1 p-2">
-                      {[
-                        { name: "John Doe", avatar: "/placeholder.svg", initials: "JD", active: true, unread: 2 },
-                        { name: "Sarah Davis", avatar: "/placeholder.svg", initials: "SD", active: false, unread: 0 },
-                        {
-                          name: "Robert Johnson",
-                          avatar: "/placeholder.svg",
-                          initials: "RJ",
-                          active: false,
-                          unread: 0,
-                        },
-                        { name: "Maria Lopez", avatar: "/placeholder.svg", initials: "ML", active: false, unread: 1 },
-                        { name: "David Wilson", avatar: "/placeholder.svg", initials: "DW", active: false, unread: 0 },
-                      ].map((contact) => (
-                        <div
-                          key={contact.name}
-                          className={`flex items-center space-x-4 rounded-md p-2 ${
-                            contact.active ? "bg-accent" : "hover:bg-accent"
-                          } cursor-pointer`}
-                        >
-                          <Avatar className="h-8 w-8">
-                            <AvatarImage src={contact.avatar || "/placeholder.svg"} alt={contact.name} />
-                            <AvatarFallback>{contact.initials}</AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1 space-y-1">
-                            <p className="text-sm font-medium leading-none">{contact.name}</p>
-                            <p className="text-xs text-muted-foreground">{contact.active ? "Typing..." : "Online"}</p>
-                          </div>
-                          {contact.unread > 0 && (
-                            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary">
-                              <span className="text-xs text-primary-foreground">{contact.unread}</span>
-                            </div>
-                          )}
-                        </div>
-                      ))}
+                <CardContent className="space-y-4">
+                  <div className="space-y-3">
+                    <div className="space-y-2">
+                      <Label>Primary Business WhatsApp</Label>
+                      <div className="flex items-center gap-2">
+                        <Input value="+234 906 918 3165" readOnly />
+                        <Button size="sm" onClick={() => window.open("https://wa.me/2349069183165", "_blank")}>
+                          <ExternalLink className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
-                  </ScrollArea>
-                </CardContent>
-              </Card>
-              <Card className="col-span-2">
-                <CardHeader className="border-b p-4">
-                  <div className="flex items-center space-x-4">
-                    <Avatar>
-                      <AvatarImage src="/placeholder.svg" alt="John Doe" />
-                      <AvatarFallback>JD</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <CardTitle className="text-lg">John Doe</CardTitle>
-                      <CardDescription>Online</CardDescription>
+                    <div className="space-y-2">
+                      <Label>Secondary Business WhatsApp</Label>
+                      <div className="flex items-center gap-2">
+                        <Input value="+234 913 563 0154" readOnly />
+                        <Button size="sm" onClick={() => window.open("https://wa.me/2349135630154", "_blank")}>
+                          <ExternalLink className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
+                  <div className="space-y-2">
+                    <Label>Business Name</Label>
+                    <Input value="BridgeOcean" readOnly />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Business Description</Label>
+                    <Input value="Satellite-Powered Emergency Logistics & Charter Services" readOnly />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <MessageCircle className="h-5 w-5" />
+                    Quick Actions
+                  </CardTitle>
                 </CardHeader>
-                <CardContent className="p-0">
-                  <ScrollArea className="h-[500px] p-4">
-                    <div className="space-y-4 p-4">
-                      <div className="flex items-end gap-2">
-                        <Avatar className="h-8 w-8">
-                          <AvatarFallback>BO</AvatarFallback>
-                        </Avatar>
-                        <div className="rounded-lg rounded-bl-none bg-muted p-3">
-                          <p className="text-sm">
-                            Hello John, this is regarding your upcoming interview on June 8th at 2:00 PM.
-                          </p>
-                        </div>
-                        <span className="text-xs text-muted-foreground">9:41 AM</span>
-                      </div>
-                      <div className="flex items-end justify-end gap-2">
-                        <span className="text-xs text-muted-foreground">9:42 AM</span>
-                        <div className="rounded-lg rounded-br-none bg-primary p-3 text-primary-foreground">
-                          <p className="text-sm">
-                            Hi, yes I'm looking forward to it. Is there anything I should prepare?
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-end gap-2">
-                        <Avatar className="h-8 w-8">
-                          <AvatarFallback>BO</AvatarFallback>
-                        </Avatar>
-                        <div className="rounded-lg rounded-bl-none bg-muted p-3">
-                          <p className="text-sm">
-                            Yes, please bring your driver's license, proof of insurance, and vehicle registration.
-                          </p>
-                        </div>
-                        <span className="text-xs text-muted-foreground">9:45 AM</span>
-                      </div>
-                      <div className="flex items-end gap-2">
-                        <Avatar className="h-8 w-8">
-                          <AvatarFallback>BO</AvatarFallback>
-                        </Avatar>
-                        <div className="rounded-lg rounded-bl-none bg-muted p-3">
-                          <p className="text-sm">
-                            I've also sent you an email with the interview details and a map to our office.
-                          </p>
-                        </div>
-                        <span className="text-xs text-muted-foreground">9:46 AM</span>
-                      </div>
-                      <div className="flex items-end justify-end gap-2">
-                        <span className="text-xs text-muted-foreground">9:48 AM</span>
-                        <div className="rounded-lg rounded-br-none bg-primary p-3 text-primary-foreground">
-                          <p className="text-sm">
-                            Perfect, I'll make sure to bring everything. I just checked my email and got the details.
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-end justify-end gap-2">
-                        <span className="text-xs text-muted-foreground">9:49 AM</span>
-                      </div>
-                    </div>
-                  </ScrollArea>
+                <CardContent className="space-y-2">
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start"
+                    onClick={() =>
+                      window.open(
+                        "https://wa.me/2349069183165?text=Test%20message%20from%20BridgeOcean%20platform",
+                        "_blank",
+                      )
+                    }
+                  >
+                    Test Primary WhatsApp (+234 906 918 3165)
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start"
+                    onClick={() =>
+                      window.open(
+                        "https://wa.me/2349135630154?text=Test%20message%20from%20BridgeOcean%20platform",
+                        "_blank",
+                      )
+                    }
+                  >
+                    Test Secondary WhatsApp (+234 913 563 0154)
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start"
+                    onClick={() => window.open("https://business.whatsapp.com/", "_blank")}
+                  >
+                    WhatsApp Business Web
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Settings className="h-5 w-5" />
+                    Integration Status
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">WhatsApp Web</span>
+                    <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Active</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">Business API</span>
+                    <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">Pending</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">Webhook</span>
+                    <span className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded">Not Set</span>
+                  </div>
                 </CardContent>
               </Card>
             </div>
           </TabsContent>
-          <TabsContent value="templates">Templates content</TabsContent>
-          <TabsContent value="settings">Settings content</TabsContent>
+
+          <TabsContent value="api" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>WhatsApp Business API Setup</CardTitle>
+                <CardDescription>For advanced integration with automated messaging capabilities</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-4">
+                    <h3 className="font-semibold">Option 1: Twilio (Recommended)</h3>
+                    <ol className="list-decimal list-inside space-y-2 text-sm">
+                      <li>
+                        Sign up at{" "}
+                        <a
+                          href="https://twilio.com/whatsapp"
+                          target="_blank"
+                          className="text-blue-600 hover:underline"
+                          rel="noreferrer"
+                        >
+                          twilio.com/whatsapp
+                        </a>
+                      </li>
+                      <li>Verify your business phone number</li>
+                      <li>Apply for WhatsApp Business API</li>
+                      <li>Get your Account SID and Auth Token</li>
+                      <li>Add credentials to your platform</li>
+                    </ol>
+                    <Button onClick={() => window.open("https://twilio.com/whatsapp", "_blank")} className="w-full">
+                      Get Started with Twilio
+                    </Button>
+                  </div>
+
+                  <div className="space-y-4">
+                    <h3 className="font-semibold">Option 2: Facebook Direct</h3>
+                    <ol className="list-decimal list-inside space-y-2 text-sm">
+                      <li>
+                        Go to{" "}
+                        <a
+                          href="https://business.whatsapp.com/api"
+                          target="_blank"
+                          className="text-blue-600 hover:underline"
+                          rel="noreferrer"
+                        >
+                          WhatsApp Business API
+                        </a>
+                      </li>
+                      <li>Apply for API access</li>
+                      <li>Complete business verification</li>
+                      <li>Wait for approval (1-4 weeks)</li>
+                      <li>Set up webhook and credentials</li>
+                    </ol>
+                    <Button
+                      variant="outline"
+                      onClick={() => window.open("https://business.whatsapp.com/api", "_blank")}
+                      className="w-full"
+                    >
+                      Apply for Facebook API
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+                  <h4 className="font-semibold mb-2">Current Status: WhatsApp Web Integration</h4>
+                  <p className="text-sm text-gray-600">
+                    Your platform currently uses WhatsApp Web links for immediate messaging. This works right now and
+                    allows you to send messages to customers directly. Once you get API access, we can upgrade to
+                    automated messaging.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
       </div>
     </div>
