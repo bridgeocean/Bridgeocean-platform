@@ -37,21 +37,44 @@ export default function SignInPage() {
     try {
       // Simple authentication check
       if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-        // Store authentication state in multiple places for redundancy
-        localStorage.setItem("isAuthenticated", "true")
-        sessionStorage.setItem("isAuthenticated", "true")
+        // Try-catch each storage operation to identify issues
+        try {
+          localStorage.setItem("isAuthenticated", "true")
+          localStorage.setItem(
+            "user",
+            JSON.stringify({
+              email: ADMIN_EMAIL,
+              role: "admin",
+              name: "BridgeOcean Admin",
+            }),
+          )
+        } catch (storageError) {
+          console.error("LocalStorage error:", storageError)
+          // Fallback to sessionStorage if localStorage fails
+          try {
+            sessionStorage.setItem("isAuthenticated", "true")
+            sessionStorage.setItem(
+              "user",
+              JSON.stringify({
+                email: ADMIN_EMAIL,
+                role: "admin",
+                name: "BridgeOcean Admin",
+              }),
+            )
+          } catch (sessionError) {
+            console.error("SessionStorage error:", sessionError)
+          }
+        }
 
-        localStorage.setItem(
-          "user",
+        // Set cookies as another fallback
+        document.cookie = "isAuthenticated=true; path=/; max-age=86400; SameSite=Lax"
+        document.cookie = `user=${encodeURIComponent(
           JSON.stringify({
             email: ADMIN_EMAIL,
             role: "admin",
             name: "BridgeOcean Admin",
           }),
-        )
-
-        // Set cookies with proper attributes
-        document.cookie = "isAuthenticated=true; path=/; max-age=86400; SameSite=Strict"
+        )}; path=/; max-age=86400; SameSite=Lax`
 
         // Force a small delay to ensure storage is complete
         setTimeout(() => {
@@ -62,7 +85,7 @@ export default function SignInPage() {
         setError("Invalid email or password. Use the credentials shown below.")
       }
     } catch (err) {
-      setError("An error occurred during sign in")
+      setError("An error occurred during sign in: " + (err instanceof Error ? err.message : String(err)))
       console.error(err)
     } finally {
       setIsLoading(false)
