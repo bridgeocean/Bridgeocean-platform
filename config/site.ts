@@ -1,18 +1,12 @@
 export const siteConfig = {
   name: "BridgeOcean",
-  description: "BridgeOcean Charter and Emergency Services",
-  url: "",
-  ogImage: "",
+  description: "Satellite-Powered Emergency Logistics & Charter Services",
+  url: "https://bridgeocean.com",
+  ogImage: "https://bridgeocean.com/og.jpg",
   links: {
-    twitter: "",
-    github: "",
+    twitter: "https://twitter.com/bridgeocean",
+    github: "https://github.com/bridgeocean",
   },
 }
 
 export type SiteConfig = typeof siteConfig
-
-export interface MainNavItem {
-  title: string
-  href: string
-  disabled?: boolean
-}
