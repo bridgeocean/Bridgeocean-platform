@@ -4,13 +4,14 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Bot, Send, Loader2, Copy, RefreshCw } from "lucide-react"
+import { Sparkles, Send, Loader2, Copy, RefreshCw, Zap } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
 export function WhatsAppGrokAI() {
   const [customerMessage, setCustomerMessage] = useState("")
   const [aiResponse, setAiResponse] = useState("")
   const [isGenerating, setIsGenerating] = useState(false)
+  const [responseSource, setResponseSource] = useState<"grok" | "fallback" | null>(null)
   const { toast } = useToast()
 
   // Example messages for quick testing
@@ -22,70 +23,68 @@ export function WhatsAppGrokAI() {
     "Tell me more about your Nexus emergency logistics platform",
   ]
 
-  // Generate AI response using templates (no external AI dependency)
+  // Generate AI response using the server-side API
   const generateAIResponse = async (message: string) => {
     setIsGenerating(true)
+    setResponseSource(null)
 
     try {
-      // Simulate AI processing time
-      await new Promise((resolve) => setTimeout(resolve, 1500))
+      // Call our server-side API endpoint that will handle the Grok API call
+      const response = await fetch("/api/generate-whatsapp-response", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message,
+          companyInfo: {
+            name: "BridgeOcean",
+            services: [
+              "Nexus Emergency Logistics - Satellite-powered emergency coordination",
+              "Premium Charter Services - Professional vehicles for hire",
+              "Partnership Opportunities - Register vehicles with our platform",
+            ],
+            contact: {
+              whatsapp: ["+234 906 918 3165", "+234 913 563 0154"],
+              email: "bridgeocean@cyberservices.com",
+              website: "bridgeocean.xyz",
+            },
+            pricing: {
+              "Toyota Camry (2006)": "₦100,000 per 10 hours",
+              "GMC Terrain (2011)": "₦200,000 per 10 hours",
+            },
+          },
+        }),
+      })
 
-      let response = ""
-
-      // Simple keyword-based response system
-      const lowerMessage = message.toLowerCase()
-
-      if (lowerMessage.includes("emergency") || lowerMessage.includes("urgent") || lowerMessage.includes("accident")) {
-        response = `🚨 *BridgeOcean Nexus Emergency Response*\n\nThank you for contacting our emergency services. This is an urgent matter that requires immediate attention.\n\n1. Please share your exact location\n2. Describe the emergency situation briefly\n3. Number of people involved\n\nOur emergency coordination team will respond immediately. You can also call our emergency hotline at +234 906 918 3165.\n\nNexus Emergency Logistics - Satellite-Powered Coordination`
-      } else if (
-        lowerMessage.includes("book") ||
-        lowerMessage.includes("charter") ||
-        lowerMessage.includes("hire") ||
-        lowerMessage.includes("car") ||
-        lowerMessage.includes("vehicle")
-      ) {
-        response = `🚗 *BridgeOcean Charter Services*\n\nThank you for your interest in our premium charter services. Here's what we offer:\n\n• Toyota Camry (2006) - ₦100,000 per 10 hours\n• GMC Terrain (2011) - ₦200,000 per 10 hours\n\nTo proceed with booking, I'll need:\n1. Your pickup location and destination\n2. Date and time\n3. Duration of service\n4. Number of passengers\n\nYou can also book directly on our website: bridgeocean.xyz/charter/book`
-      } else if (
-        lowerMessage.includes("price") ||
-        lowerMessage.includes("cost") ||
-        lowerMessage.includes("rate") ||
-        lowerMessage.includes("fee")
-      ) {
-        response = `💰 *BridgeOcean Pricing Information*\n\nOur current rates:\n\n• Toyota Camry (2006): ₦100,000 per 10 hours\n• GMC Terrain (2011): ₦200,000 per 10 hours\n\nAdditional charges apply for trips outside Lagos.\n\nAll prices include professional driver, fuel, and vehicle maintenance. For custom quotes or special requirements, please provide more details about your trip.`
-      } else if (
-        lowerMessage.includes("partner") ||
-        lowerMessage.includes("register") ||
-        lowerMessage.includes("join") ||
-        lowerMessage.includes("driver")
-      ) {
-        response = `🤝 *Become a BridgeOcean Partner*\n\nThank you for your interest in partnering with us! We're always looking for quality vehicles and professional drivers.\n\nTo register your vehicle:\n1. Visit bridgeocean.xyz/charter/partner\n2. Complete the registration form\n3. Upload required documents\n\nRequirements:\n• Valid means of identification\n• Vehicle registration\n• Proof of insurance\n• Vehicle photos\n\nOur team will review your application within 48 hours.`
-      } else if (
-        lowerMessage.includes("location") ||
-        lowerMessage.includes("address") ||
-        lowerMessage.includes("office") ||
-        lowerMessage.includes("contact")
-      ) {
-        response = `📍 *BridgeOcean Contact Information*\n\nYou can reach us through:\n\n• WhatsApp: +234 906 918 3165 or +234 913 563 0154\n• Email: bridgeocean@cyberservices.com\n• Website: bridgeocean.xyz\n\nOur team is available 24/7 for emergency services and 8am-8pm for general inquiries and bookings.`
-      } else if (
-        lowerMessage.includes("nexus") ||
-        lowerMessage.includes("satellite") ||
-        lowerMessage.includes("emergency logistics") ||
-        lowerMessage.includes("coordination")
-      ) {
-        response = `🛰️ *Nexus Emergency Logistics*\n\nNexus is our satellite-powered emergency coordination platform that provides:\n\n• Rapid emergency response coordination\n• Real-time vehicle tracking and routing\n• Hospital and medical facility coordination\n• Integrated communication systems\n\nIn emergency situations, Nexus significantly reduces response times and improves outcomes through intelligent coordination.\n\nFor more information, visit bridgeocean.xyz/nexus`
-      } else {
-        response = `👋 *Welcome to BridgeOcean*\n\nThank you for reaching out to us. We offer:\n\n• 🚨 Nexus Emergency Logistics - Satellite-powered emergency coordination\n• 🚗 Premium Charter Services - Professional vehicles for hire\n• 🤝 Partnership Opportunities - Register your vehicle\n\nHow may we assist you today? Feel free to ask about our services, pricing, booking process, or emergency coordination.`
+      if (!response.ok) {
+        throw new Error("Failed to generate response")
       }
 
-      setAiResponse(response)
+      const data = await response.json()
+      setAiResponse(data.text)
+      setResponseSource(data.source || "fallback")
+
+      if (data.source === "grok") {
+        toast({
+          title: "Response generated with Grok AI",
+          description: "High-quality AI response generated successfully",
+        })
+      } else {
+        toast({
+          title: "Response generated with fallback system",
+          description: "Professional response generated using intelligent rules",
+        })
+      }
     } catch (error) {
       console.error("Error generating AI response:", error)
       toast({
         title: "Error generating response",
-        description: "There was an error generating the response. Please try again.",
+        description: "There was an error connecting to the AI service. Please try again.",
         variant: "destructive",
       })
       setAiResponse("Sorry, I couldn't generate a response at this time. Please try again later.")
+      setResponseSource("fallback")
     } finally {
       setIsGenerating(false)
     }
@@ -119,10 +118,13 @@ export function WhatsAppGrokAI() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Bot className="h-5 w-5" />
-            Advanced AI WhatsApp Assistant
+            <Sparkles className="h-5 w-5" />
+            Grok AI WhatsApp Assistant
           </CardTitle>
-          <CardDescription>Generate intelligent, context-aware responses for WhatsApp communications</CardDescription>
+          <CardDescription>
+            Generate intelligent, context-aware responses for WhatsApp communications using Grok AI with intelligent
+            fallback
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
@@ -165,7 +167,7 @@ export function WhatsAppGrokAI() {
               </>
             ) : (
               <>
-                <Bot className="mr-2 h-4 w-4" />
+                <Sparkles className="mr-2 h-4 w-4" />
                 Generate AI Response
               </>
             )}
@@ -174,7 +176,18 @@ export function WhatsAppGrokAI() {
           {aiResponse && (
             <div className="space-y-2 mt-4">
               <div className="flex items-center justify-between">
-                <label className="text-sm font-medium">AI Generated Response</label>
+                <div className="flex items-center gap-2">
+                  <label className="text-sm font-medium">AI Generated Response</label>
+                  {responseSource === "grok" && (
+                    <span className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded flex items-center gap-1">
+                      <Zap className="h-3 w-3" />
+                      Grok AI
+                    </span>
+                  )}
+                  {responseSource === "fallback" && (
+                    <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Smart Fallback</span>
+                  )}
+                </div>
                 <div className="flex gap-2">
                   <Button variant="ghost" size="sm" onClick={() => generateAIResponse(customerMessage)}>
                     <RefreshCw className="h-4 w-4" />
@@ -212,6 +225,39 @@ export function WhatsAppGrokAI() {
               </div>
             </div>
           )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">How It Works</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="flex items-start gap-3">
+            <Sparkles className="h-5 w-5 text-purple-600 mt-0.5" />
+            <div>
+              <h4 className="font-medium">Grok AI (When Available)</h4>
+              <p className="text-sm text-muted-foreground">
+                Uses advanced AI to generate contextual, intelligent responses
+              </p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3">
+            <Zap className="h-5 w-5 text-blue-600 mt-0.5" />
+            <div>
+              <h4 className="font-medium">Smart Fallback System</h4>
+              <p className="text-sm text-muted-foreground">
+                Intelligent rule-based responses that handle emergencies, bookings, and general inquiries professionally
+              </p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3">
+            <Send className="h-5 w-5 text-green-600 mt-0.5" />
+            <div>
+              <h4 className="font-medium">Direct WhatsApp Integration</h4>
+              <p className="text-sm text-muted-foreground">One-click sending to your business WhatsApp numbers</p>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>

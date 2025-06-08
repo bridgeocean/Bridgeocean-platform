@@ -2,14 +2,13 @@
 
 import { MainNav } from "@/components/main-nav"
 import { WhatsAppIntegration } from "@/components/whatsapp-integration"
-import { WhatsAppAIAssistant } from "@/components/whatsapp-ai-assistant"
 import { WhatsAppGrokAI } from "@/components/whatsapp-grok-ai"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Phone, Settings, MessageCircle, ExternalLink, Bot, Sparkles } from "lucide-react"
+import { Phone, Settings, MessageCircle, ExternalLink, Sparkles } from "lucide-react"
 
 export default function WhatsAppPage() {
   return (
@@ -18,18 +17,17 @@ export default function WhatsAppPage() {
       <div className="flex-1 space-y-4 p-8 pt-6">
         <div className="flex items-center justify-between space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">WhatsApp Communications</h2>
+          <p className="text-muted-foreground">
+            Generate professional responses for WhatsApp communications with driver candidates and clients
+          </p>
         </div>
 
-        <Tabs defaultValue="send" className="space-y-4">
+        <Tabs defaultValue="grok" className="space-y-4">
           <TabsList>
             <TabsTrigger value="send">Send Messages</TabsTrigger>
-            <TabsTrigger value="ai-assistant">
-              <Bot className="h-4 w-4 mr-2" />
-              Simple AI
-            </TabsTrigger>
-            <TabsTrigger value="grok-ai">
+            <TabsTrigger value="grok">
               <Sparkles className="h-4 w-4 mr-2" />
-              Advanced AI
+              Grok AI Assistant
             </TabsTrigger>
             <TabsTrigger value="business">Business Setup</TabsTrigger>
             <TabsTrigger value="api">API Integration</TabsTrigger>
@@ -39,11 +37,7 @@ export default function WhatsAppPage() {
             <WhatsAppIntegration />
           </TabsContent>
 
-          <TabsContent value="ai-assistant" className="space-y-4">
-            <WhatsAppAIAssistant />
-          </TabsContent>
-
-          <TabsContent value="grok-ai" className="space-y-4">
+          <TabsContent value="grok" className="space-y-4">
             <WhatsAppGrokAI />
           </TabsContent>
 
@@ -151,7 +145,7 @@ export default function WhatsAppPage() {
                     <span className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded">Not Set</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm">Advanced AI</span>
+                    <span className="text-sm">Grok AI</span>
                     <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Active</span>
                   </div>
                 </CardContent>
@@ -162,70 +156,58 @@ export default function WhatsAppPage() {
           <TabsContent value="api" className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle>WhatsApp Business API Setup</CardTitle>
-                <CardDescription>For advanced integration with automated messaging capabilities</CardDescription>
+                <CardTitle>AI Integration Setup</CardTitle>
+                <CardDescription>Configure your AI assistant for automated WhatsApp responses</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-4">
-                    <h3 className="font-semibold">Option 1: Twilio (Recommended)</h3>
+                    <h3 className="font-semibold">Grok AI (xAI) - Recommended</h3>
                     <ol className="list-decimal list-inside space-y-2 text-sm">
                       <li>
                         Sign up at{" "}
                         <a
-                          href="https://twilio.com/whatsapp"
+                          href="https://x.ai"
                           target="_blank"
                           className="text-blue-600 hover:underline"
                           rel="noreferrer"
                         >
-                          twilio.com/whatsapp
+                          x.ai
                         </a>
                       </li>
-                      <li>Verify your business phone number</li>
-                      <li>Apply for WhatsApp Business API</li>
-                      <li>Get your Account SID and Auth Token</li>
-                      <li>Add credentials to your platform</li>
+                      <li>Navigate to API section</li>
+                      <li>Generate your API key</li>
+                      <li>Add XAI_API_KEY to Vercel environment variables</li>
+                      <li>Redeploy your application</li>
                     </ol>
-                    <Button onClick={() => window.open("https://twilio.com/whatsapp", "_blank")} className="w-full">
-                      Get Started with Twilio
+                    <Button onClick={() => window.open("https://x.ai", "_blank")} className="w-full">
+                      Get Started with Grok AI
                     </Button>
                   </div>
 
                   <div className="space-y-4">
-                    <h3 className="font-semibold">Option 2: Facebook Direct</h3>
+                    <h3 className="font-semibold">Fallback System</h3>
                     <ol className="list-decimal list-inside space-y-2 text-sm">
-                      <li>
-                        Go to{" "}
-                        <a
-                          href="https://business.whatsapp.com/api"
-                          target="_blank"
-                          className="text-blue-600 hover:underline"
-                          rel="noreferrer"
-                        >
-                          WhatsApp Business API
-                        </a>
-                      </li>
-                      <li>Apply for API access</li>
-                      <li>Complete business verification</li>
-                      <li>Wait for approval (1-4 weeks)</li>
-                      <li>Set up webhook and credentials</li>
+                      <li>Intelligent rule-based responses</li>
+                      <li>Context-aware message generation</li>
+                      <li>Professional WhatsApp formatting</li>
+                      <li>Emergency situation handling</li>
+                      <li>Booking and pricing assistance</li>
                     </ol>
-                    <Button
-                      variant="outline"
-                      onClick={() => window.open("https://business.whatsapp.com/api", "_blank")}
-                      className="w-full"
-                    >
-                      Apply for Facebook API
-                    </Button>
+                    <div className="p-3 bg-green-50 rounded-lg">
+                      <p className="text-sm text-green-800">
+                        ✅ Fallback system is always active and provides professional responses even without AI API
+                        keys.
+                      </p>
+                    </div>
                   </div>
                 </div>
 
                 <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                  <h4 className="font-semibold mb-2">Current Status: WhatsApp Web Integration</h4>
+                  <h4 className="font-semibold mb-2">Current Status: Hybrid AI System</h4>
                   <p className="text-sm text-gray-600">
-                    Your platform currently uses WhatsApp Web links for immediate messaging. This works right now and
-                    allows you to send messages to customers directly. Once you get API access, we can upgrade to
-                    automated messaging.
+                    Your platform uses Grok AI when available, with an intelligent fallback system that ensures
+                    professional responses are always generated. This provides reliability and cost control.
                   </p>
                 </div>
               </CardContent>

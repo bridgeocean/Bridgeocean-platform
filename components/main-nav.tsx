@@ -113,13 +113,13 @@ export function MainNav() {
                 key={route.href}
                 href={route.href}
                 className={cn(
-                  "flex items-center space-x-3 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground",
+                  "flex items-center space-x-3 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground break-words",
                   route.active ? "bg-accent text-accent-foreground" : "text-foreground/60",
                 )}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {route.icon}
-                <span>{route.label}</span>
+                <span className="flex-1 min-w-0 break-words">{route.label}</span>
               </Link>
             ))}
             <div className="pt-2 border-t">

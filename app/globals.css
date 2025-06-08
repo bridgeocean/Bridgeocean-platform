@@ -10,25 +10,20 @@
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
+    --primary: 221.2 83.2% 53.3%;
     --primary-foreground: 210 40% 98%;
     --secondary: 210 40% 96%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary-foreground: 222.2 84% 4.9%;
     --muted: 210 40% 96%;
     --muted-foreground: 215.4 16.3% 46.9%;
     --accent: 210 40% 96%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent-foreground: 222.2 84% 4.9%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --ring: 221.2 83.2% 53.3%;
     --radius: 0.5rem;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
   }
 
   .dark {
@@ -38,8 +33,8 @@
     --card-foreground: 210 40% 98%;
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 84% 4.9%;
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
     --muted: 217.2 32.6% 17.5%;
@@ -50,12 +45,7 @@
     --destructive-foreground: 210 40% 98%;
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --ring: 224.3 76.3% 94.1%;
   }
 }
 
@@ -68,261 +58,159 @@
   }
 }
 
-/* COMPREHENSIVE MOBILE FIXES */
-html,
-body {
-  overflow-x: hidden !important;
-  width: 100% !important;
-  max-width: 100vw !important;
+/* Enhanced Mobile Responsiveness */
+@layer utilities {
+  /* Prevent horizontal overflow */
+  .overflow-x-hidden {
+    overflow-x: hidden !important;
+  }
+
+  /* Text wrapping and responsive sizing */
+  .text-responsive {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    line-height: 1.5;
+  }
+
+  /* Container responsive padding */
+  .container-responsive {
+    @apply px-4 sm:px-6 lg:px-8;
+    max-width: 100vw;
+  }
+
+  /* Button responsive sizing */
+  .btn-responsive {
+    @apply text-sm sm:text-base;
+    min-height: 44px; /* Touch-friendly minimum */
+    padding: 0.75rem 1rem;
+  }
+
+  /* Card responsive spacing */
+  .card-responsive {
+    @apply p-4 sm:p-6 lg:p-8;
+    margin: 0.5rem;
+    max-width: calc(100vw - 1rem);
+  }
+
+  /* Table responsive wrapper */
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+  }
+
+  /* Navigation responsive */
+  .nav-responsive {
+    @apply flex-col sm:flex-row;
+    gap: 0.5rem;
+  }
 }
 
-/* Fix all text overflow issues */
-* {
-  word-wrap: break-word !important;
-  overflow-wrap: break-word !important;
-  hyphens: auto !important;
-}
-
-/* Prevent any element from being wider than screen */
-* {
-  max-width: 100% !important;
-  box-sizing: border-box !important;
-}
-
-/* Fix containers */
-.container {
-  width: 100% !important;
-  max-width: 100% !important;
-  padding-left: 0.75rem !important;
-  padding-right: 0.75rem !important;
-}
-
-/* Mobile-first responsive text */
+/* Mobile-specific fixes */
 @media (max-width: 640px) {
-  /* Headings */
+  /* Ensure all text elements wrap properly */
   h1,
-  .text-4xl,
-  .text-5xl,
-  .text-6xl {
-    font-size: 1.5rem !important; /* 24px */
-    line-height: 1.4 !important;
-    word-break: break-word !important;
-  }
-
   h2,
-  .text-3xl {
-    font-size: 1.25rem !important; /* 20px */
-    line-height: 1.4 !important;
-    word-break: break-word !important;
-  }
-
   h3,
-  .text-2xl {
-    font-size: 1.125rem !important; /* 18px */
-    line-height: 1.4 !important;
-    word-break: break-word !important;
-  }
-
   h4,
-  .text-xl {
-    font-size: 1rem !important; /* 16px */
-    line-height: 1.4 !important;
-    word-break: break-word !important;
-  }
-
-  /* Body text */
+  h5,
+  h6,
   p,
   span,
   div,
-  .text-base {
-    font-size: 0.875rem !important; /* 14px */
-    line-height: 1.5 !important;
-    word-break: break-word !important;
-  }
-
-  /* Small text */
-  .text-sm {
-    font-size: 0.75rem !important; /* 12px */
-    line-height: 1.4 !important;
-  }
-
-  .text-xs {
-    font-size: 0.625rem !important; /* 10px */
-    line-height: 1.3 !important;
-  }
-
-  /* Large text */
-  .text-lg {
-    font-size: 1rem !important; /* 16px */
-    line-height: 1.4 !important;
-  }
-}
-
-/* Fix buttons for mobile */
-@media (max-width: 640px) {
+  a,
   button,
-  .btn,
-  .button {
-    min-height: 44px !important;
-    padding: 0.75rem 1rem !important;
-    font-size: 0.875rem !important;
-    word-break: break-word !important;
+  label {
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    hyphens: auto !important;
+    max-width: 100% !important;
   }
 
-  /* Form inputs */
+  /* Container adjustments */
+  .container {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    max-width: 100vw !important;
+  }
+
+  /* Card adjustments */
+  .card {
+    margin: 0.5rem !important;
+    max-width: calc(100vw - 1rem) !important;
+  }
+
+  /* Button adjustments */
+  button {
+    min-height: 44px !important;
+    font-size: 16px !important; /* Prevents zoom on iOS */
+  }
+
+  /* Input adjustments */
   input,
   textarea,
   select {
-    min-height: 44px !important;
     font-size: 16px !important; /* Prevents zoom on iOS */
-    padding: 0.75rem !important;
-  }
-}
-
-/* Fix cards and content areas */
-@media (max-width: 640px) {
-  .card,
-  [class*="card"] {
-    margin: 0.25rem !important;
-    padding: 0.75rem !important;
-    word-break: break-word !important;
-  }
-
-  /* Fix navigation */
-  nav,
-  .nav {
-    padding: 0.5rem !important;
-    word-break: break-word !important;
-  }
-
-  /* Fix tables */
-  table {
-    font-size: 0.75rem !important;
-    word-break: break-word !important;
-  }
-
-  td,
-  th {
-    padding: 0.25rem !important;
-    word-break: break-word !important;
-  }
-}
-
-/* Fix specific layout issues */
-@media (max-width: 640px) {
-  /* Grid layouts */
-  .grid {
-    grid-template-columns: 1fr !important;
-    gap: 0.5rem !important;
-  }
-
-  /* Flex layouts */
-  .flex {
-    flex-wrap: wrap !important;
-    gap: 0.5rem !important;
-  }
-
-  /* Spacing */
-  .space-y-4 > * + * {
-    margin-top: 0.75rem !important;
-  }
-
-  .space-x-4 > * + * {
-    margin-left: 0 !important;
-    margin-top: 0.5rem !important;
-  }
-
-  /* Padding and margins */
-  .p-4 {
-    padding: 0.75rem !important;
-  }
-  .p-6 {
-    padding: 1rem !important;
-  }
-  .p-8 {
-    padding: 1rem !important;
-  }
-  .px-4 {
-    padding-left: 0.75rem !important;
-    padding-right: 0.75rem !important;
-  }
-  .py-4 {
-    padding-top: 0.75rem !important;
-    padding-bottom: 0.75rem !important;
-  }
-
-  .m-4 {
-    margin: 0.5rem !important;
-  }
-  .mx-4 {
-    margin-left: 0.5rem !important;
-    margin-right: 0.5rem !important;
-  }
-  .my-4 {
-    margin-top: 0.5rem !important;
-    margin-bottom: 0.5rem !important;
-  }
-}
-
-/* Fix images */
-img {
-  max-width: 100% !important;
-  height: auto !important;
-  object-fit: contain !important;
-}
-
-/* Fix modals and dialogs */
-@media (max-width: 640px) {
-  .dialog-content,
-  [role="dialog"] {
-    width: 95vw !important;
-    max-width: 95vw !important;
-    margin: 0.5rem !important;
-    padding: 1rem !important;
-  }
-}
-
-/* Fix any remaining overflow issues */
-.overflow-hidden {
-  overflow: hidden !important;
-}
-
-.w-full {
-  width: 100% !important;
-}
-
-.max-w-full {
-  max-width: 100% !important;
-}
-
-/* Emergency text fixes */
-.break-words {
-  word-break: break-word !important;
-  overflow-wrap: break-word !important;
-}
-
-.break-all {
-  word-break: break-all !important;
-}
-
-/* Fix any long URLs or emails */
-a {
-  word-break: break-all !important;
-  overflow-wrap: break-word !important;
-}
-
-/* Ensure no element can cause horizontal scroll */
-@media (max-width: 640px) {
-  * {
-    min-width: 0 !important;
-  }
-
-  /* Fix pre and code blocks */
-  pre,
-  code {
-    white-space: pre-wrap !important;
-    word-break: break-word !important;
-    overflow-x: auto !important;
     max-width: 100% !important;
+  }
+
+  /* Table adjustments */
+  table {
+    font-size: 0.875rem !important;
+  }
+
+  /* Navigation adjustments */
+  nav {
+    flex-direction: column !important;
+  }
+
+  /* Prevent text overflow in flex containers */
+  .flex > * {
+    min-width: 0 !important;
+    flex-shrink: 1 !important;
+  }
+}
+
+/* Touch-friendly improvements */
+@media (hover: none) and (pointer: coarse) {
+  /* Touch targets */
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Larger tap targets for small elements */
+  .tap-target {
+    padding: 0.75rem;
+  }
+}
+
+/* Landscape mobile adjustments */
+@media (max-width: 896px) and (orientation: landscape) {
+  .mobile-landscape-adjust {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+  }
+}
+
+/* Simple mobile responsiveness */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-size: 1.5rem;
+  }
+
+  .card {
+    margin: 0.5rem;
   }
 }
