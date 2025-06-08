@@ -29,7 +29,7 @@ export default function WhatsAppPage() {
             </TabsTrigger>
             <TabsTrigger value="grok-ai">
               <Sparkles className="h-4 w-4 mr-2" />
-              Grok AI
+              Advanced AI
             </TabsTrigger>
             <TabsTrigger value="business">Business Setup</TabsTrigger>
             <TabsTrigger value="api">API Integration</TabsTrigger>
@@ -151,7 +151,7 @@ export default function WhatsAppPage() {
                     <span className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded">Not Set</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm">Grok AI</span>
+                    <span className="text-sm">Advanced AI</span>
                     <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Active</span>
                   </div>
                 </CardContent>
