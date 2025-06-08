@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/mode-toggle"
-import { Menu, X, Satellite, Car, Phone, Users, BarChart3 } from "lucide-react"
+import { Menu, X, Satellite, Car, Phone, Users, BarChart3 } from 'lucide-react'
 import { useState } from "react"
 import { useAuth } from "@/components/auth-provider"
 
@@ -92,12 +92,12 @@ export function MainNav() {
             <div className="hidden md:flex items-center space-x-2">
               {!user ? (
                 <>
-                  <Link href="/auth/signin">
+                  <Link href="/signin">
                     <Button variant="ghost" size="sm">
                       Sign In
                     </Button>
                   </Link>
-                  <Link href="/auth/register">
+                  <Link href="/register">
                     <Button size="sm">Sign Up</Button>
                   </Link>
                 </>
@@ -150,12 +150,12 @@ export function MainNav() {
             <div className="pt-2 border-t space-y-2">
               {!user ? (
                 <>
-                  <Link href="/auth/signin" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Link href="/signin" onClick={() => setIsMobileMenuOpen(false)}>
                     <Button variant="ghost" size="sm" className="w-full justify-start">
                       Sign In
                     </Button>
                   </Link>
-                  <Link href="/auth/register" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Link href="/register" onClick={() => setIsMobileMenuOpen(false)}>
                     <Button size="sm" className="w-full">
                       Sign Up
                     </Button>
