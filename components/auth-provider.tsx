@@ -1,84 +1,80 @@
 "use client"
 
 import type React from "react"
+
 import { createContext, useContext, useEffect, useState } from "react"
-import { useRouter, usePathname } from "next/navigation"
+import type { User } from "@supabase/supabase-js"
+import { supabase } from "@/lib/supabase-client"
 
-type AuthUser = {
-  email: string
-  name: string
-  role: string
-} | null
-
-type AuthContextType = {
-  user: AuthUser
-  isAuthenticated: boolean
-  isLoading: boolean
-  signOut: () => void
+interface AuthContextType {
+  user: User | null
+  userProfile: any | null
+  loading: boolean
+  signOut: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
-  isAuthenticated: false,
-  isLoading: true,
-  signOut: () => {},
+  userProfile: null,
+  loading: true,
+  signOut: async () => {},
 })
 
-export const useAuth = () => useContext(AuthContext)
+export const useAuth = () => {
+  const context = useContext(AuthContext)
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider")
+  }
+  return context
+}
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<AuthUser>(null)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
-  const router = useRouter()
-  const pathname = usePathname()
+  const [user, setUser] = useState<User | null>(null)
+  const [userProfile, setUserProfile] = useState<any | null>(null)
+  const [loading, setLoading] = useState(true)
 
-  // Check authentication on mount
   useEffect(() => {
-    const checkAuth = () => {
-      try {
-        const authStatus = localStorage.getItem("isAuthenticated") === "true"
-        const userData = localStorage.getItem("user")
+    // Get initial session
+    const getInitialSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
+      setUser(session?.user ?? null)
 
-        if (authStatus && userData) {
-          const parsedUser = JSON.parse(userData)
-          setUser(parsedUser)
-          setIsAuthenticated(true)
-        } else {
-          setUser(null)
-          setIsAuthenticated(false)
-        }
-      } catch (error) {
-        console.error("Auth check error:", error)
-        setUser(null)
-        setIsAuthenticated(false)
-      } finally {
-        setIsLoading(false)
+      if (session?.user) {
+        // Fetch user profile
+        const { data: profile } = await supabase.from("users").select("*").eq("id", session.user.id).single()
+        setUserProfile(profile)
       }
+
+      setLoading(false)
     }
 
-    checkAuth()
+    getInitialSession()
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      setUser(session?.user ?? null)
+
+      if (session?.user) {
+        // Fetch user profile
+        const { data: profile } = await supabase.from("users").select("*").eq("id", session.user.id).single()
+        setUserProfile(profile)
+      } else {
+        setUserProfile(null)
+      }
+
+      setLoading(false)
+    })
+
+    return () => subscription.unsubscribe()
   }, [])
 
-  // Protect dashboard routes
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated && pathname?.startsWith("/dashboard")) {
-      router.push("/signin")
-    }
-    if (!isLoading && !isAuthenticated && pathname?.startsWith("/admin")) {
-      router.push("/signin")
-    }
-  }, [isAuthenticated, isLoading, pathname, router])
-
-  const signOut = () => {
-    localStorage.removeItem("isAuthenticated")
-    localStorage.removeItem("user")
-    document.cookie = "isAuthenticated=; path=/; max-age=0"
-
-    setUser(null)
-    setIsAuthenticated(false)
-    router.push("/signin")
+  const signOut = async () => {
+    await supabase.auth.signOut()
   }
 
-  return <AuthContext.Provider value={{ user, isAuthenticated, isLoading, signOut }}>{children}</AuthContext.Provider>
+  return <AuthContext.Provider value={{ user, userProfile, loading, signOut }}>{children}</AuthContext.Provider>
 }

@@ -7,10 +7,12 @@ import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/mode-toggle"
 import { Menu, X, Satellite, Car, Phone, Users, BarChart3 } from "lucide-react"
 import { useState } from "react"
+import { useAuth } from "@/components/auth-provider"
 
 export function MainNav() {
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const { user } = useAuth()
 
   const routes = [
     {
@@ -88,6 +90,27 @@ export function MainNav() {
           <div className="w-full flex-1 md:w-auto md:flex-none">
             {/* Desktop actions */}
             <div className="hidden md:flex items-center space-x-2">
+              {!user ? (
+                <>
+                  <Link href="/auth/signin">
+                    <Button variant="ghost" size="sm">
+                      Sign In
+                    </Button>
+                  </Link>
+                  <Link href="/auth/register">
+                    <Button size="sm">Sign Up</Button>
+                  </Link>
+                </>
+              ) : (
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-muted-foreground">Welcome, {user.email}</span>
+                  <Link href="/dashboard">
+                    <Button variant="outline" size="sm">
+                      Dashboard
+                    </Button>
+                  </Link>
+                </div>
+              )}
               <ModeToggle />
             </div>
           </div>
@@ -122,7 +145,32 @@ export function MainNav() {
                 <span className="flex-1 min-w-0 break-words">{route.label}</span>
               </Link>
             ))}
-            <div className="pt-2 border-t">
+
+            {/* Mobile auth buttons */}
+            <div className="pt-2 border-t space-y-2">
+              {!user ? (
+                <>
+                  <Link href="/auth/signin" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Button variant="ghost" size="sm" className="w-full justify-start">
+                      Sign In
+                    </Button>
+                  </Link>
+                  <Link href="/auth/register" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Button size="sm" className="w-full">
+                      Sign Up
+                    </Button>
+                  </Link>
+                </>
+              ) : (
+                <div className="space-y-2">
+                  <div className="px-3 py-2 text-sm text-muted-foreground">Welcome, {user.email}</div>
+                  <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Button variant="outline" size="sm" className="w-full">
+                      Dashboard
+                    </Button>
+                  </Link>
+                </div>
+              )}
               <div className="flex items-center justify-between px-3 py-2">
                 <span className="text-sm font-medium">Theme</span>
                 <ModeToggle />
